@@ -2,6 +2,7 @@ package com.project.ui.screens.gym
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.project.data.Place
 import com.project.data.Task
 import com.project.data.repository.AuthRepository
 import com.project.data.repository.UserRepository
@@ -28,6 +29,7 @@ class GymViewModel(
 
         }
     }
+
 }
 
 sealed class GymUiState {

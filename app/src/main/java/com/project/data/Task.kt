@@ -11,7 +11,7 @@ data class Task (
     val userId: String = "",
     val taskName: String = "",
     val description: String = "",
-    val state: String = "",             // Ej: "pendiente", "completada"
+    val state: String = "pendiente",             // Ej: "pendiente", "completada"
     val annotation: String = "",
     val place: Place = Place(),
     val date: String = LocalDate.now().toString(),

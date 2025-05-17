@@ -5,10 +5,9 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -17,97 +16,37 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.android.gms.maps.CameraUpdate
+import androidx.core.graphics.toColorInt
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.Place.Field
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.compose.rememberMarkerState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
+import com.project.data.Urgency
+import org.koin.core.qualifier.named
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-// Componente para los campos de entrada de tarea, descripción y fecha
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun InputFields(
-    taskName: String,
-    description: String,
-    date: String,
-    onTaskNameChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
-    onDateChange: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-//            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        // Row con Tarea y Fecha
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-
-        ) {
-            OutlinedTextField(
-                value = taskName,
-                onValueChange = { newValue -> onTaskNameChange(newValue) },  // Corregido para actualizar el estado
-                modifier = Modifier.background(color = MaterialTheme.colorScheme.primaryContainer),
-                placeholder = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) { Text("Nombre de Tarea", style = MaterialTheme.typography.titleLarge) }
-                },
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    textAlign = TextAlign.Center
-                ),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
-                singleLine = true,
-            )
-        }
-
-        CustomDatePicker(
-            initialDate = null,
-            onDateSelected = { dateStr -> onDateChange(dateStr) },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-
-        // Campo de descripción
-        OutlinedTextField(
-            value = description,
-            onValueChange = onDescriptionChange,
-            label = { Text("Descripción") },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 4
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -165,19 +104,11 @@ fun CustomDatePicker(
 
     OutlinedTextField(
         value = inputText,
-        onValueChange = {
-            inputText = it
-            try {
-                // Intentamos parsear la fecha en formato 'dd/MM/yyyy'
-                val parsed = LocalDate.parse(it, inputDateFormatter)
-                updateDate(parsed)
-            } catch (e: DateTimeParseException) {
-                // Si no se puede parsear la fecha, no realizamos ninguna acción
-                onDateSelected("")
-            }
-        },
+        onValueChange = { /* No hacemos nada para evitar edición */ },
+        readOnly = true,  // Evita que el usuario pueda escribir
         label = { Text("Fecha") },
-        modifier = modifier,
+        modifier = modifier
+            .clickable { showDialog = true }, // Abrir diálogo al pulsar sobre el campo
         trailingIcon = {
             Icon(
                 imageVector = Icons.Default.CalendarToday,
@@ -185,15 +116,61 @@ fun CustomDatePicker(
                 modifier = Modifier.clickable { showDialog = true }
             )
         },
+        singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done,
             keyboardType = KeyboardType.Number
         ),
         keyboardActions = KeyboardActions(
-            onDone = { /* Acción al presionar 'done' */ }
-        ),
-        singleLine = true
+            onDone = { /* No hace falta acción aquí */ }
+        )
     )
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UrgePicker(
+    urgencies: List<Urgency> = listOf(
+        Urgency("1", colorHex = "#E06C6A", name = "Alta"),
+        Urgency("2", colorHex = "#EFE27F", name = "Media"),
+        Urgency("3", colorHex = "#BFDAC0", name = "Baja")
+    ),
+    onUrgencySelected: (Urgency) -> Unit = {}
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedUrgency by remember { mutableStateOf<Urgency?>(null) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selectedUrgency?.name ?: "Selecciona urgencia",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Urgencia") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier.menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true)
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            urgencies.forEach { urgency ->
+                DropdownMenuItem(
+                    text = { Text(urgency.name) },
+                    onClick = {
+                        selectedUrgency = urgency
+                        onUrgencySelected(urgency)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
 }
 
 
@@ -479,9 +456,66 @@ fun MyMap(location: LatLng) {
     }
 }
 
+fun Color.darken(factor: Float = 0.2f): Color {
+    return Color(
+        red = (red * (1 - factor)).coerceIn(0f, 1f),
+        green = (green * (1 - factor)).coerceIn(0f, 1f),
+        blue = (blue * (1 - factor)).coerceIn(0f, 1f),
+        alpha = alpha
+    )
+}
 
 
+@Composable
+fun UrgeIndicator(urgency: Urgency) {
+    val backgroundColor = Color(urgency.colorHex.toColorInt())
+    val circleColor = backgroundColor.darken(0.25f) // ahora sí se verá distinto
 
+    Card(
+        modifier = Modifier
+            .width(120.dp)
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(backgroundColor)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            // Círculo con color más oscuro
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .clip(CircleShape)
+                    .background(circleColor)
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = urgency.name,
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun UrgeIndicatorPreview() {
+    val urgency = Urgency("1", colorHex = "#E06C6A", name = "Urgente")
+    val urgency2 = Urgency("1", colorHex = "#EFE27F", name = "Medio")
+    val urgency3 = Urgency("1", colorHex = "#BFDAC0", name = "Bajo")
+   Row {
+        UrgeIndicator(urgency = urgency)
+        UrgeIndicator(urgency = urgency2)
+        UrgeIndicator(urgency = urgency3)
+    }
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
@@ -495,14 +529,14 @@ fun FullFormPreview() {
 
     // En esta preview no tenemos un PlacesClient real, así que usamos una lambda vacía
     Column(modifier = Modifier.padding(16.dp)) {
-        InputFields(
-            taskName = taskName,
-            description = description,
-            date = date,
-            onTaskNameChange = { taskName = it },
-            onDescriptionChange = { description = it },
-            onDateChange = { date = it }
-        )
+//        InputFields(
+//            taskName = taskName,
+//            description = description,
+//            date = date,
+//            onTaskNameChange = { taskName = it },
+//            onDescriptionChange = { description = it },
+//            onDateChange = { date = it }
+//        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -563,12 +597,12 @@ fun PreviewInputFields() {
     var description by remember { mutableStateOf("Descripción de la tarea") }
     var date by remember { mutableStateOf("12/12/2025") }
 
-    InputFields(
-        taskName = taskName,
-        description = description,
-        date = date,
-        onTaskNameChange = { taskName = it },
-        onDescriptionChange = { description = it },
-        onDateChange = { date = it }
-    )
+//    InputFields(
+//        taskName = taskName,
+//        description = description,
+//        date = date,
+//        onTaskNameChange = { taskName = it },
+//        onDescriptionChange = { description = it },
+//        onDateChange = { date = it }
+//    )
 }

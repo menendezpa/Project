@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.project.data.Place
 import com.project.data.Task
 import com.project.data.User
 import kotlinx.coroutines.channels.awaitClose
@@ -19,6 +20,7 @@ class UserRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val userCollection = firestore.collection("USERS")
     private val taskCollection = firestore.collection("TASKS")
+    private val placeCollection = firestore.collection("PLACES")
 
 
     // Puedes añadir otras funciones para obtener un usuario específico, añadir uno nuevo, etc.
@@ -114,18 +116,30 @@ class UserRepository {
                 "description" to task.description,
                 "date" to task.date,
                 "annotation" to task.annotation,
-                "place" to task.place,
+                "place" to task.place
             )
-            taskCollection.add(taskToInsert).await()
 
+            // Insertar la tarea
+            val taskRef = taskCollection.add(taskToInsert).await()
+
+            // Comprobamos si el lugar ya existe (por nombre y lat)
             if (task.place.name.isNotEmpty() && task.place.lat.isNotEmpty()) {
-                val placeToInsert = hashMapOf(
+                val existingPlaces = firestore.collection("PLACES")
+                    .whereEqualTo("name", task.place.name)
+                    .whereEqualTo("lat", task.place.lat)
+                    .get()
+                    .await()
 
-                    "name" to task.place.name,
-                    "address" to task.place.lat
-                )
-                firestore.collection("PLACES").add(placeToInsert).await()
+                // Si no existe, lo insertamos
+                if (existingPlaces.isEmpty) {
+                    val placeToInsert = hashMapOf(
+                        "name" to task.place.name,
+                        "lat" to task.place.lat,
+                        "lon" to task.place.lon
+                    )
 
+                    firestore.collection("PLACES").add(placeToInsert).await()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
