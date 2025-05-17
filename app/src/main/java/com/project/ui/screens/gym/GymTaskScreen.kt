@@ -9,11 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,16 +31,13 @@ import com.google.android.libraries.places.api.model.Place
 import com.project.data.Task
 import com.project.data.Urgency
 import com.project.ui.component.AnnotationField
-import com.project.ui.component.ConfirmCancelButtons
-import com.project.ui.component.GymTopBar
-import com.project.ui.component.MyMap
-import com.project.ui.component.SimplePlaceAutocompleteTextField
-import com.project.ui.screens.gym.component.DatePickerField
-import com.project.ui.screens.gym.component.LocationInputField
-import com.project.ui.screens.gym.component.NotesInputField
-import com.project.ui.screens.gym.component.TaskActionButtons
-import com.project.ui.screens.gym.component.TaskMap
-import com.project.ui.screens.gym.component.UrgencyDropDown
+import com.project.ui.component.AppTopBar
+import com.project.ui.component.DatePickerField
+import com.project.ui.component.LocationInputField
+import com.project.ui.component.NotesInputField
+import com.project.ui.component.TaskActionButtons
+import com.project.ui.component.TaskMap
+import com.project.ui.component.UrgencyDropDown
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -142,6 +140,11 @@ fun GymScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Gym(navController: NavController, viewModel: GymViewModel) {
+
+    LaunchedEffect(Unit) {
+        viewModel.loadUrgencies()
+    }
+
     val context = LocalContext.current
     val placesClient = remember { Places.createClient(context) }
 
@@ -159,11 +162,7 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
         mutableStateOf(LatLng(40.4168, -3.7038))  // Madrid
     }
 
-    val urgencyLevels = listOf(
-        Urgency("1", colorHex = "#E06C6A", name = "Alta"),
-        Urgency("2", colorHex = "#EFE27F", name = "Media"),
-        Urgency("3", colorHex = "#7FEF8F", name = "Baja")
-    )
+    val urgencyLevels by viewModel.urgencies.collectAsState()
     val task = Task(
 
         taskName = taskName,
@@ -177,7 +176,7 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
     )
 
     Scaffold(
-        topBar = { GymTopBar() },
+        topBar = { AppTopBar(title = "Nueva Tarea: Deporte", canNavigateBack = false) },
         bottomBar = {
             TaskActionButtons(
                 onCancel = { navController.popBackStack() },

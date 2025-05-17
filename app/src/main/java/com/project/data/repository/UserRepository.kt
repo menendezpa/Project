@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.project.data.Place
 import com.project.data.Task
+import com.project.data.Urgency
 import com.project.data.User
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,7 @@ class UserRepository {
     private val userCollection = firestore.collection("USERS")
     private val taskCollection = firestore.collection("TASKS")
     private val placeCollection = firestore.collection("PLACES")
+    private val urgencyCollection = firestore.collection("URGENCY")
 
 
     // Puedes añadir otras funciones para obtener un usuario específico, añadir uno nuevo, etc.
@@ -81,32 +83,27 @@ class UserRepository {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getDaysWithTasks(userId: String): Set<LocalDate> {
+    suspend fun getUrgencies(): List<Urgency> {
+        val tag = "getUrgencies"
         return try {
-            // Realizamos una consulta filtrando en la colección "TASKS" por el userId
-            val querySnapshot = taskCollection
-                .whereEqualTo("userId", userId)
-                .get()
-                .await()
-
-            // Mapeamos cada documento: extraemos el campo "date" (almacenado como String) y lo parseamos a LocalDate
-            querySnapshot.documents.mapNotNull { document ->
-                document.getString("date")?.let { dateStr ->
-                    try {
-                        LocalDate.parse(dateStr) // Se asume que la cadena está en formato ISO "yyyy-MM-dd"
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        null
-                    }
+            Log.d(tag, "Consultando todos los documentos de la colección URGENCY")
+            val snapshot = urgencyCollection.get().await()
+            Log.d(tag, "Documentos totales en URGENCY: ${snapshot.documents.size}")
+            snapshot.documents.forEach { document ->
+                Log.d(tag, "Documento ID: ${document.id} -> Datos: ${document.data}")
+            }
+            snapshot.documents.mapNotNull { document ->
+                val urgency = document.toObject<Urgency>()
+                if (urgency == null) {
+                    Log.d(tag, "No se pudo mapear el documento con ID: ${document.id}")
                 }
-            }.toSet()
+                urgency?.copy(id = document.id)
+            }
         } catch (e: Exception) {
-            e.printStackTrace()
-            emptySet()
+            Log.e(tag, "Error en getUrgencies", e)
+            emptyList()
         }
     }
-
 
     suspend fun insertTask(userId: String, task: Task) {
         try {

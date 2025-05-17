@@ -1,4 +1,4 @@
-package com.project.ui.screens.gym.component
+package com.project.ui.component
 
 import android.os.Build
 import androidx.annotation.RequiresApi

@@ -1,4 +1,4 @@
-package com.project.ui.screens.gym.component
+package com.project.ui.component
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -33,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.project.data.Urgency
-import com.project.ui.component.UrgeIndicator
 
 
 @Composable

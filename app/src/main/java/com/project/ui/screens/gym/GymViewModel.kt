@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.data.Place
 import com.project.data.Task
+import com.project.data.Urgency
 import com.project.data.repository.AuthRepository
 import com.project.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,9 @@ class GymViewModel(
     private val _uiState = MutableStateFlow<GymUiState>(GymUiState.Idle)
     val uiState: StateFlow<GymUiState> = _uiState.asStateFlow()
 
+    private val _urgencies = MutableStateFlow<List<Urgency>>(emptyList())
+    val urgencies: StateFlow<List<Urgency>> = _urgencies.asStateFlow()
+
     fun insertTask(task: Task) {
         viewModelScope.launch {
             _uiState.value = GymUiState.Loading
@@ -29,6 +33,13 @@ class GymViewModel(
 
         }
     }
+
+    fun loadUrgencies() {
+        viewModelScope.launch {
+            _urgencies.value = userRepository.getUrgencies()
+        }
+    }
+
 
 }
 

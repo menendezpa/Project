@@ -1,4 +1,4 @@
-package com.project.ui.screens.gym.component
+package com.project.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
