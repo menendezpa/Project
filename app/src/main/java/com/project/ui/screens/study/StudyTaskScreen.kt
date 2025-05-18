@@ -173,7 +173,7 @@ fun Study(navController: NavController, viewModel: StudyViewModel) {
         place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
         annotation = annotation,
         categoryId = "Estudios",
-        urgencyId = urgency.name,
+        urgency = urgency,
         tagIds = listOf()
     )
 

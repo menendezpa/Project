@@ -71,6 +71,7 @@ fun DatePickerField(
     // Campo visual estilo Material 3
     OutlinedTextField(
         value = selectedDate,
+        textStyle = MaterialTheme.typography.labelLarge,
         onValueChange = {},
         readOnly = true,
         modifier = modifier

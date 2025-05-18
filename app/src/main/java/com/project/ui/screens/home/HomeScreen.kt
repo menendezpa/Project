@@ -10,16 +10,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +33,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.project.data.Category
 import com.project.data.Task
-import com.project.ui.component.AppBottomBar
+import com.project.data.Urgency
 import com.project.ui.component.AppTopBar
 import com.project.ui.component.CalendarGrid
 import com.project.ui.component.CalendarHeader
 import com.project.ui.component.FAB
+import com.project.ui.component.FloatingTask
 import com.project.ui.component.TaskFilter
 import com.project.ui.component.TaskList
+import com.project.ui.component.UrgencyFilter
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.time.YearMonth
@@ -70,7 +69,10 @@ fun Home(
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 viewModel.loadTasksForUser()
+            }
+            if (event == Lifecycle.Event.ON_CREATE) {
                 viewModel.getCategories()
+                viewModel.getUrgencies()
             }
         }
 
@@ -82,25 +84,33 @@ fun Home(
         }
     }
 
+    // Nuevo estado para filtro de categoría
+    var selectedCategory by remember { mutableStateOf<Category?>(Category()) }
+    var selectedUrgency by remember { mutableStateOf<Urgency?>(Urgency()) }
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
 
-    // Nuevo estado para filtro de categoría
-    var selectedCategory by remember { mutableStateOf<Category?>(Category()) }
 
+    //Variables de estado
     val tasks by viewModel.tasks.collectAsState()
     val daysWithTasks by viewModel.daysWithTasks.collectAsState()
     val categories by viewModel.categories.collectAsState()
+    val urgencies by viewModel.urgencies.collectAsState()
+    var selectedTask by remember { mutableStateOf<Task?>(null) }
 
-    val filteredTasks = if (selectedCategory == null || selectedCategory!!.name.trim()
-            .equals("Todas", ignoreCase = true)
-    ) {
-        tasks
-    } else {
-        tasks.filter {
-            it.categoryId.trim().equals(selectedCategory!!.name.trim(), ignoreCase = true)
-        }
+    //Filtro
+    val filteredTasks = tasks.filter { task ->
+        val categoryMatches = selectedCategory == null ||
+                selectedCategory!!.name.trim().equals("Todas", ignoreCase = true) ||
+                task.categoryId.trim().equals(selectedCategory!!.name.trim(), ignoreCase = true)
+
+        val urgencyMatches = selectedUrgency == null ||
+                selectedUrgency!!.name.trim().equals("Urgencia", ignoreCase = true) ||
+                task.urgency.name.trim().equals(selectedUrgency!!.name.trim(), ignoreCase = true)
+
+        categoryMatches && urgencyMatches
     }
+
 
 
 
@@ -161,14 +171,26 @@ fun Home(
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
             )
 
-            Row {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 TaskFilter(
                     categories = categories,
                     selectedCategory = selectedCategory,
                     onCategorySelected = { selectedCategory = it },
-                    modifier = Modifier // 👈 Ajusta aquí el ancho deseado
+                    modifier = Modifier.weight(1f)
+                )
+                UrgencyFilter(
+                    urgencies = urgencies,
+                    selectedUrgency = selectedUrgency,
+                    onUrgencySelected = { selectedUrgency = it },
+                    modifier = Modifier.weight(1f)
                 )
             }
+
 
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -176,8 +198,16 @@ fun Home(
             selectedDate?.let { date ->
                 TaskList(
                     tasks = filteredTasks,
-                    onTaskClick = {},
+                    onTaskClick = { selectedTask = it },
                     date = date
+                )
+            }
+            selectedTask?.let { task ->
+                FloatingTask(
+                    task = task,
+                    onDismiss = { selectedTask = null },
+                    onSave = { selectedTask = null },
+                    urgencyLevels = urgencies
                 )
             }
         }
@@ -185,7 +215,6 @@ fun Home(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(modifier: Modifier = Modifier) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }

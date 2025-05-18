@@ -50,13 +50,13 @@ fun TaskFilter(
             value = selectedCategory?.name ?: "Selecciona",
             onValueChange = {},
             readOnly = true,
-            label = {
-                Text(
-                    "Categoría",
-                    style = MaterialTheme.typography.labelSmall
-                )
-            },
-            textStyle = MaterialTheme.typography.labelSmall, // Texto más pequeño
+//            label = {
+//                Text(
+//                    "Categoría",
+//                    style = MaterialTheme.typography.labelSmall
+//                )
+//            },
+            textStyle = MaterialTheme.typography.labelLarge, // Texto más pequeño
             trailingIcon = {
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,

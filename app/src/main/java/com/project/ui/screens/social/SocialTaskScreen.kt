@@ -4,7 +4,6 @@ package com.project.ui.screens.social
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -158,7 +157,7 @@ fun Social(navController: NavController, viewModel: SocialViewModel) {
     var selectedPlace by remember { mutableStateOf<Place?>(null) }
     var latitud by remember { mutableStateOf("") }
     var longitud by remember { mutableStateOf("") }
-    var urgency by remember { mutableStateOf<Urgency?>(null) }
+    var urgency by remember { mutableStateOf(Urgency()) }
 
     var mapLocation by remember {
         mutableStateOf(LatLng(40.4168, -3.7038))  // Madrid
@@ -173,9 +172,10 @@ fun Social(navController: NavController, viewModel: SocialViewModel) {
         place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
         annotation = annotation,
         categoryId = "Social",
-        urgencyId = urgency?.name ?: "",
+        urgency = urgency,
         tagIds = listOf()
     )
+
 
     Scaffold(
         topBar = {

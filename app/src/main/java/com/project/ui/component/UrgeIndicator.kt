@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.project.data.Urgency
@@ -69,4 +70,10 @@ fun Color.darken(factor: Float): Color {
         blue = (blue * factor).coerceIn(0f, 1f),
         alpha = alpha
     )
+}
+
+@Preview
+@Composable
+fun UrgeIndicatorPreview() {
+    UrgeIndicator(urgency = Urgency("Urgente", colorHex = "#FF0000"))
 }

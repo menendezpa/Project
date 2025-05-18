@@ -172,7 +172,7 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
         place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
         annotation = annotation,
         categoryId = "Entrenamiento",
-        urgencyId = urgency.name,
+        urgency = urgency,
         tagIds = listOf()
     )
 

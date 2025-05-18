@@ -17,15 +17,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.project.data.Place
 import com.project.data.Task
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -46,7 +51,7 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
-
+import androidx.compose.foundation.basicMarquee
 //Componente de cada celda del calendario
 //@Composable
 //fun CalendarCell(
@@ -145,16 +150,13 @@ fun CalendarCell(
             .clip(RoundedCornerShape(8.dp))
             .background(
                 color = if (isWithTask) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.inversePrimary,
-                shape = RoundedCornerShape(8.dp)
+                else MaterialTheme.colorScheme.inversePrimary, shape = RoundedCornerShape(8.dp)
             )
             .border(
                 width = 1.dp,
                 color = if (isWithTask) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.outline,
                 shape = RoundedCornerShape(8.dp)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
+            ), contentAlignment = Alignment.Center) {
         Text(
             text = day.toString(),
             color = if (isWithTask) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
@@ -217,57 +219,126 @@ fun CalendarGrid(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskCard(
-    modifier: Modifier = Modifier,
     task: Task,
-    onClick: () -> Unit = {} // Opcional: si deseas manejar el clic en la tarea
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier
-            .clickable { onClick() }
-            .padding(horizontal = 8.dp)
-            .clip(RoundedCornerShape(8.dp)),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // Encabezado: nombre + urgencia + estado
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = task.taskName,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                UrgeIndicator(urgency = task.urgency)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Línea divisoria suave
+            HorizontalDivider(
+                thickness = 0.8.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Lugar y fecha con íconos
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Place,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = task.place.name.replace(Regex("\\d+,?\\s*"), ""),
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(1f)
+                            .basicMarquee() // << animación tipo marquesina
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = task.date,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
+
+            // Descripción
+            if (task.description.isNotBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    modifier = Modifier.weight(1f),
-                    text = task.taskName,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = task.date,
-                    style = MaterialTheme.typography.titleMedium
+                    text = task.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
+            // Estado (pendiente, completada)
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = task.description,
-                style = MaterialTheme.typography.bodyMedium
+                text = task.state.uppercase(),
+                style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.primary),
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(6.dp)
+                    )
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
     }
-
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskList(
-    tasks: List<Task>,
-    date: LocalDate,
-    onTaskClick: (Task) -> Unit
+    tasks: List<Task>, date: LocalDate, onTaskClick: (Task) -> Unit
 ) {
     // Filtrado: solo se muestran las tasks cuya fecha coincide exactamente con la fecha seleccionada.
     val filteredTasks = tasks.filter { task ->
@@ -283,8 +354,7 @@ fun TaskList(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+                .padding(16.dp), contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -299,7 +369,13 @@ fun TaskList(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "No hay tareas para la fecha ${date.format(DateTimeFormatter.ofPattern("d MMM uuu", Locale.getDefault()))}",
+                    text = "No hay tareas para la fecha ${
+                        date.format(
+                            DateTimeFormatter.ofPattern(
+                                "d MMM uuu", Locale.getDefault()
+                            )
+                        )
+                    }",
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge
@@ -308,12 +384,10 @@ fun TaskList(
 
                 Text(
                     text = "¡Crea una!",
-                    modifier = Modifier
-                        .padding(8.dp),
+                    modifier = Modifier.padding(8.dp),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge.copy(
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
+                        color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold
                     )
                 )
             }
@@ -324,16 +398,16 @@ fun TaskList(
 
             LazyColumn {
                 items(filteredTasks) { task ->
-                    // Puedes personalizar la visualización de la tarea
                     TaskCard(
                         task = task,
+                        onClick = { onTaskClick(task) }, // Pasas el click correctamente
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onTaskClick(task) }
-                            .padding(4.dp)
+                            .padding(4.dp) // sin clickable aquí
                     )
                 }
             }
+
         }
     }
 
@@ -348,13 +422,11 @@ fun PreviewTaskList() {
             taskName = "Comprar víveres",
             description = "Lista del supermercado",
             date = LocalDate.of(2025, 5, 1).toString()
-        ),
-        Task(
+        ), Task(
             taskName = "Hacer ejercicio",
             description = "Sesión de gimnasio",
             date = LocalDate.of(2025, 5, 1).toString()
-        ),
-        Task(
+        ), Task(
             taskName = "Leer un libro",
             description = "Capítulo 3",
             date = LocalDate.of(2025, 5, 1).toString()
@@ -363,9 +435,7 @@ fun PreviewTaskList() {
 
     MaterialTheme {
         TaskList(
-            tasks = sampleTasks,
-            onTaskClick = {},
-            date = LocalDate.of(2025, 5, 1)
+            tasks = sampleTasks, onTaskClick = {}, date = LocalDate.of(2025, 5, 1)
         )
     }
 }
@@ -376,12 +446,14 @@ fun PreviewTaskList() {
 @Composable
 fun TaskPreview() {
     val task =
-        Task(taskName = "Task 1", description = "Description 1", date = LocalDate.now().toString())
+        Task(
+            taskName = "Task 1",
+            description = "Description 1",
+            date = LocalDate.now().toString(),
+            place = Place(name = "19162 Pioz, Guadalajara, España")
+        )
     TaskCard(
-        modifier = Modifier.fillMaxWidth(),
-        task = task,
-        onClick = { TODO() }
-    )
+        modifier = Modifier.fillMaxWidth(), task = task, onClick = { TODO() })
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

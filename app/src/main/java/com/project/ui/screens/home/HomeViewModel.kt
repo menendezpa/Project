@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.data.Category
 import com.project.data.Task
+import com.project.data.Urgency
 import com.project.data.repository.AuthRepository
 import com.project.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +34,9 @@ class HomeViewModel(
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
     val categories: StateFlow<List<Category>> = _categories.asStateFlow()
+
+    private val _urgencies = MutableStateFlow<List<Urgency>>(emptyList())
+    val urgencies: StateFlow<List<Urgency>> = _urgencies.asStateFlow()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -69,7 +73,11 @@ class HomeViewModel(
         }
     }
 
-
+    fun getUrgencies() {
+        viewModelScope.launch {
+            _urgencies.value = userRepository.getUrgencies()
+        }
+    }
 
 
 }

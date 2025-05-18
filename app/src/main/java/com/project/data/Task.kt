@@ -17,7 +17,7 @@ data class Task (
     val place: Place = Place(),
     val date: String = LocalDate.now().toString(),
     val categoryId: String = "",        // ID de categoría
-    val urgencyId: String = "",         // ID de urgencia
+    val urgency: Urgency = Urgency(),         // ID de urgencia
     val tagIds: List<String> = listOf() // IDs de etiquetas
 ) {
     @get:Exclude
