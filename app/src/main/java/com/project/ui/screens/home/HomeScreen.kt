@@ -6,8 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,12 +34,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import com.project.data.Category
 import com.project.data.Task
 import com.project.ui.component.AppBottomBar
 import com.project.ui.component.AppTopBar
 import com.project.ui.component.CalendarGrid
 import com.project.ui.component.CalendarHeader
 import com.project.ui.component.FAB
+import com.project.ui.component.TaskFilter
 import com.project.ui.component.TaskList
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
@@ -65,6 +70,7 @@ fun Home(
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 viewModel.loadTasksForUser()
+                viewModel.getCategories()
             }
         }
 
@@ -79,29 +85,53 @@ fun Home(
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
 
-    // Estados observables
+    // Nuevo estado para filtro de categoría
+    var selectedCategory by remember { mutableStateOf<Category?>(Category()) }
+
     val tasks by viewModel.tasks.collectAsState()
     val daysWithTasks by viewModel.daysWithTasks.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+
+    val filteredTasks = if (selectedCategory == null || selectedCategory!!.name.trim()
+            .equals("Todas", ignoreCase = true)
+    ) {
+        tasks
+    } else {
+        tasks.filter {
+            it.categoryId.trim().equals(selectedCategory!!.name.trim(), ignoreCase = true)
+        }
+    }
+
+
 
     Scaffold(
-        topBar = { AppTopBar(canNavigateBack = false) },
+        topBar = {
+            AppTopBar(
+                title = "Tus tareas",
+                canNavigateBack = false,
+                onLogOut = {
+                    viewModel.logOut()
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FAB(
-                onFirstClick = { viewModel.logOut()
-                    navController.navigate("login"){
-                        popUpTo("home"){inclusive = true}
-                    } },
-                onThirdClick = {
-                    navController.navigate("GymScreen")
-                }
+                onFirstClick = { navController.navigate("StudyScreen") },
+                onSecondClick = { navController.navigate("SocialScreen") },
+                onThirdClick = { navController.navigate("GymScreen") }
             )
         }
     ) { innerPadding ->
-        Column {
+        Column(
+            modifier = modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
             Card(
-                modifier = modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(16.dp)
@@ -126,14 +156,26 @@ fun Home(
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    .padding(start = 0.dp, end = 0.dp, bottom = 16.dp),
                 thickness = 3.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
             )
 
+            Row {
+                TaskFilter(
+                    categories = categories,
+                    selectedCategory = selectedCategory,
+                    onCategorySelected = { selectedCategory = it },
+                    modifier = Modifier // 👈 Ajusta aquí el ancho deseado
+                )
+            }
+
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             selectedDate?.let { date ->
                 TaskList(
-                    tasks = tasks,
+                    tasks = filteredTasks,
                     onTaskClick = {},
                     date = date
                 )

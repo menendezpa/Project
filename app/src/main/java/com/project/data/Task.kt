@@ -3,6 +3,7 @@ package com.project.data
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.Exclude
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -19,6 +20,7 @@ data class Task (
     val urgencyId: String = "",         // ID de urgencia
     val tagIds: List<String> = listOf() // IDs de etiquetas
 ) {
+    @get:Exclude
     val localDate: LocalDate?
         get() = try {
             LocalDate.parse(date)

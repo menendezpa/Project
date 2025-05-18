@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.project.data.Category
 import com.project.data.Task
 import com.project.data.repository.AuthRepository
 import com.project.data.repository.UserRepository
@@ -29,6 +30,10 @@ class HomeViewModel(
      * Estado de los días con tareas*/
     private val _daysWithTasks = MutableStateFlow<Set<LocalDate>>(emptySet())
     val daysWithTasks: StateFlow<Set<LocalDate>> = _daysWithTasks.asStateFlow()
+
+    private val _categories = MutableStateFlow<List<Category>>(emptyList())
+    val categories: StateFlow<List<Category>> = _categories.asStateFlow()
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadTasksForUser() {
@@ -58,7 +63,11 @@ class HomeViewModel(
         }
     }
 
-
+    fun getCategories() {
+        viewModelScope.launch {
+            _categories.value = userRepository.getCategories()
+        }
+    }
 
 
 

@@ -1,8 +1,10 @@
-package com.project.ui.screens.gym
+package com.project.ui.screens.social
+
 
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,10 +44,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GymScreen(
-    navController: NavController, viewModel: GymViewModel = koinViewModel()
+fun SocialScreen(
+    navController: NavController, viewModel: SocialViewModel = koinViewModel()
 ) {
-    Gym(navController = navController, viewModel = viewModel)
+    Social(navController = navController, viewModel = viewModel)
 }
 
 
@@ -139,7 +141,7 @@ fun GymScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Gym(navController: NavController, viewModel: GymViewModel) {
+fun Social(navController: NavController, viewModel: SocialViewModel) {
 
     LaunchedEffect(Unit) {
         viewModel.loadUrgencies()
@@ -156,8 +158,7 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
     var selectedPlace by remember { mutableStateOf<Place?>(null) }
     var latitud by remember { mutableStateOf("") }
     var longitud by remember { mutableStateOf("") }
-    var urgency by remember { mutableStateOf(Urgency()) } // Inicializas con una urgencia por defecto
-
+    var urgency by remember { mutableStateOf<Urgency?>(null) }
 
     var mapLocation by remember {
         mutableStateOf(LatLng(40.4168, -3.7038))  // Madrid
@@ -171,27 +172,37 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
         date = date,
         place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
         annotation = annotation,
-        categoryId = "Entrenamiento",
-        urgencyId = urgency.name,
+        categoryId = "Social",
+        urgencyId = urgency?.name ?: "",
         tagIds = listOf()
     )
 
     Scaffold(
-        topBar = { AppTopBar(title = "Nueva Tarea: Deporte", canNavigateBack = false) },
+        topBar = {
+            AppTopBar(
+                title = "Nueva Tarea: Social",
+                canNavigateBack = false,
+                canLogOut = false
+            )
+        },
         bottomBar = {
-            TaskActionButtons(onCancel = { navController.popBackStack() }, onConfirm = {
-                if (taskName.isBlank() || description.isBlank() || date.isBlank() || selectedPlace == null) {
-                    Toast.makeText(
-                        context, "Por favor, complete todos los campos.", Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    viewModel.insertTask(
-                        task = task
-                    )
-                    navController.popBackStack()
+            TaskActionButtons(
+                onCancel = { navController.popBackStack() },
+                onConfirm = {
+                    if (taskName.isBlank() || description.isBlank() || date.isBlank() || selectedPlace == null) {
+                        Toast.makeText(
+                            context, "Por favor, complete todos los campos.", Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        viewModel.insertTask(
+                            task = task
+                        )
+                        navController.popBackStack()
+                    }
                 }
-            })
-        }) { innerPadding ->
+            )
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -214,9 +225,7 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
                 UrgencyDropDown(
                     urgencyLevels = urgencyLevels,
                     selectedUrgency = urgency,
-                    onUrgencyChange = { newUrgency ->
-                        urgency = newUrgency
-                    },
+                    onUrgencyChange = { urgency = it },
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp) // altura fija
@@ -247,7 +256,8 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
                             it // Actualiza la ubicación del mapa con la ubicación seleccionada
                     }
                 },
-                onLatitudChange = { latitud = it })
+                onLatitudChange = { latitud = it }
+            )
             TaskMap(location = mapLocation)
             AnnotationField(annotation = annotation, onAnnotationChange = { annotation = it })
         }

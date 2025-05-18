@@ -61,7 +61,7 @@ fun NotesInputField(
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center
                 ),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 singleLine = true,
             )
         }
@@ -73,6 +73,7 @@ fun NotesInputField(
             onValueChange = onDescriptionChange,
             label = { Text("Descripción") },
             modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
             maxLines = 4
         )
     }

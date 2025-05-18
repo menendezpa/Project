@@ -61,3 +61,12 @@ fun UrgeIndicator(urgency: Urgency) {
         }
     }
 }
+fun Color.darken(factor: Float): Color {
+    // factor debe estar entre 0 y 1, donde 0 es negro y 1 es el color original
+    return Color(
+        red = (red * factor).coerceIn(0f, 1f),
+        green = (green * factor).coerceIn(0f, 1f),
+        blue = (blue * factor).coerceIn(0f, 1f),
+        alpha = alpha
+    )
+}

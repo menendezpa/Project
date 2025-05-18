@@ -1,4 +1,5 @@
-package com.project.ui.screens.gym
+package com.project.ui.screens.study
+
 
 import android.os.Build
 import android.widget.Toast
@@ -42,10 +43,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GymScreen(
-    navController: NavController, viewModel: GymViewModel = koinViewModel()
+fun StudyScreen(
+    navController: NavController, viewModel: StudyViewModel = koinViewModel()
 ) {
-    Gym(navController = navController, viewModel = viewModel)
+    Study(navController = navController, viewModel = viewModel)
 }
 
 
@@ -139,7 +140,7 @@ fun GymScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Gym(navController: NavController, viewModel: GymViewModel) {
+fun Study(navController: NavController, viewModel: StudyViewModel) {
 
     LaunchedEffect(Unit) {
         viewModel.loadUrgencies()
@@ -171,13 +172,19 @@ fun Gym(navController: NavController, viewModel: GymViewModel) {
         date = date,
         place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
         annotation = annotation,
-        categoryId = "Entrenamiento",
+        categoryId = "Estudios",
         urgencyId = urgency.name,
         tagIds = listOf()
     )
 
     Scaffold(
-        topBar = { AppTopBar(title = "Nueva Tarea: Deporte", canNavigateBack = false) },
+        topBar = {
+            AppTopBar(
+                title = "Nueva Tarea: Estudios",
+                canNavigateBack = false,
+                canLogOut = false
+            )
+        },
         bottomBar = {
             TaskActionButtons(onCancel = { navController.popBackStack() }, onConfirm = {
                 if (taskName.isBlank() || description.isBlank() || date.isBlank() || selectedPlace == null) {

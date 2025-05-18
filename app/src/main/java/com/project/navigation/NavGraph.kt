@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import com.project.ui.screens.gym.GymScreen
 import com.project.ui.screens.home.HomeScreen
 import com.project.ui.screens.login.LoginScreen
+import com.project.ui.screens.social.SocialScreen
+import com.project.ui.screens.study.StudyScreen
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -32,6 +34,13 @@ fun AppNavGraph(navController: NavHostController, startDestination: String) {
             }
             composable("GymScreen") {
                 GymScreen(navController)
+            }
+
+            composable("SocialScreen") {
+                SocialScreen(navController)
+            }
+            composable("StudyScreen") {
+                StudyScreen(navController)
             }
 
 
