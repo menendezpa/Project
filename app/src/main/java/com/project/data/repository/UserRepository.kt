@@ -27,6 +27,14 @@ class UserRepository {
     private val categoryCollection = firestore.collection("TASKCATEGORIES")
 
 
+    suspend fun createUser(user: User) {
+        try {
+            userCollection.add(user).await()
+        } catch (e: Exception) {
+            // Manejar errores, por ejemplo, loggearlos o lanzar una excepción personalizada
+            e.printStackTrace()
+        }
+    }
     // Puedes añadir otras funciones para obtener un usuario específico, añadir uno nuevo, etc.
     suspend fun getUserById(userId: String): User? {
         return try {
@@ -105,6 +113,7 @@ class UserRepository {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun insertTask(userId: String, task: Task) {
         try {
 
@@ -154,4 +163,22 @@ class UserRepository {
             emptyList()
         }
     }
+
+    suspend fun updateTask(task: Task) {
+        try {
+            taskCollection.document(task.id).set(task).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun deleteTask(task: Task) {
+        try {
+            taskCollection.document(task.id).delete().await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
+
+

@@ -81,7 +81,7 @@ fun AppTopBar(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = title)
+                Text(text = title, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.weight(1f))
                 if (canLogOut) {
                     IconButton(onClick = { showLogoutDialog = true }) {

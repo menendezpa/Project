@@ -84,7 +84,12 @@ open class LoginViewModel(private val auth: AuthRepository) : ViewModel() {
      * Gestiona el proceso de recuperación de contraseña
      */
     fun resetPassword() {
-        // Implementación para recuperar contraseña
+
+        if (username.value.isEmpty()) {
+            _uiState.value = LoginUiState.Error("Usuario es requerido")
+            return
+        }
+
     }
 
     /**

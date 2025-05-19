@@ -79,7 +79,17 @@ class HomeViewModel(
         }
     }
 
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            userRepository.updateTask(task)
+        }
+    }
 
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            userRepository.deleteTask(task)
+        }
+    }
 }
 /**
  * Estados de la pantalla de inicio*/

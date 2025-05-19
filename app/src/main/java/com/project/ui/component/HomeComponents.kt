@@ -52,6 +52,16 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
+
 //Componente de cada celda del calendario
 //@Composable
 //fun CalendarCell(
@@ -92,7 +102,7 @@ fun CalendarHeader(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),// Usamos el mismo padding que en la rejilla
+                .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -117,19 +127,22 @@ fun CalendarHeader(
                 )
             }
         }
-        // Bloque de los días de la semana.
+
+        // Bloque de los días de la semana con distribución proporcional
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+            // Cada día de la semana ocupa una fracción igual del espacio disponible
             daysOfWeek.forEach { day ->
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = day,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -145,7 +158,9 @@ fun CalendarCell(
 ) {
     Box(
         modifier = modifier
-            .size(40.dp)
+            .aspectRatio(1f) // Mantiene la relación de aspecto cuadrada
+            .fillMaxWidth()
+            .padding(2.dp)
             .clickable { onClick() }
             .clip(RoundedCornerShape(8.dp))
             .background(
@@ -156,13 +171,14 @@ fun CalendarCell(
                 width = 1.dp,
                 color = if (isWithTask) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.outline,
                 shape = RoundedCornerShape(8.dp)
-            ), contentAlignment = Alignment.Center) {
+            ),
+        contentAlignment = Alignment.Center
+    ) {
         Text(
             text = day.toString(),
             color = if (isWithTask) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         )
     }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -170,48 +186,45 @@ fun CalendarCell(
 fun CalendarGrid(
     yearMonth: YearMonth,
     modifier: Modifier = Modifier,
-    onDayClick: (LocalDate) -> Unit, // El callback recibe la fecha completa
-    daysWithTask: Set<LocalDate> = emptySet() // Conjunto de fechas que tienen tareas
+    onDayClick: (LocalDate) -> Unit,
+    daysWithTask: Set<LocalDate> = emptySet()
 ) {
-    // 1. Obtenemos el primer día del mes y el total de días
     val firstDayOfMonth = yearMonth.atDay(1)
     val totalDays = yearMonth.lengthOfMonth()
-    // Si la semana inicia en lunes, el índice (0-based) del primer día es:
-    val firstDayIndex = firstDayOfMonth.dayOfWeek.value - 1
+    val firstDayIndex = firstDayOfMonth.dayOfWeek.value % 7
 
-    // 2. Calculamos el total de celdas para cuadrícula (múltiplo de 7)
     val totalCells = ((firstDayIndex + totalDays + 6) / 7) * 7
-
-    // 3. Creamos una lista que contenga, para cada celda, la fecha completa o null si es celda vacía
     val cellDates: List<LocalDate?> = List(totalCells) { index ->
         if (index < firstDayIndex || index >= firstDayIndex + totalDays) null
         else yearMonth.atDay(index - firstDayIndex + 1)
     }
 
-    // 4. Agrupamos la lista en filas de 7 celdas cada una
     val rows = cellDates.chunked(7)
 
-    Column(modifier = modifier.padding(8.dp)) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
         rows.forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 row.forEach { date ->
-                    if (date == null) {
-                        // Celdas vacías: usamos un Spacer para mantener el tamaño
-                        Spacer(modifier = Modifier.size(40.dp))
-                    } else {
-                        CalendarCell(
-                            day = date.dayOfMonth,
-                            onClick = { onDayClick(date) },  // Se pasa el objeto LocalDate completo
-                            isWithTask = daysWithTask.contains(date),
-                            modifier = Modifier.size(40.dp)
-                        )
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (date != null) {
+                            CalendarCell(
+                                day = date.dayOfMonth,
+                                onClick = { onDayClick(date) },
+                                isWithTask = daysWithTask.contains(date),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }
@@ -319,18 +332,45 @@ fun TaskCard(
 
             // Estado (pendiente, completada)
             Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = task.state.uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.primary),
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .background(
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(6.dp)
-                    )
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            )
+            State(task.state, onClick = {}, enabled = false )
         }
+    }
+}
+
+@Composable
+fun State(
+    currentState: String,
+    enabled: Boolean = true,
+    onClick: (newState: String) -> Unit
+) {
+    val backgroundColor = when (currentState.lowercase()) {
+        "pendiente" -> MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+        "completada" -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
+        else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+    }
+
+    val textColor = when (currentState.lowercase()) {
+        "pendiente" -> MaterialTheme.colorScheme.primary
+        "completada" -> MaterialTheme.colorScheme.secondary
+        else -> MaterialTheme.colorScheme.primary
+    }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = currentState.uppercase(),
+            style = MaterialTheme.typography.labelSmall.copy(color = textColor),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End)
+                .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .let { mod ->
+                    if (enabled) mod.clickable {
+                        val newState = if (currentState.lowercase() == "pendiente") "completada" else "pendiente"
+                        onClick(newState)
+                    } else mod
+                }
+        )
     }
 }
 

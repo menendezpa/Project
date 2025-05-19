@@ -8,6 +8,7 @@ import com.project.ui.screens.gym.GymViewModel
 import com.project.ui.screens.home.HomeViewModel
 //import com.project.data.repository.AuthRepository
 import com.project.ui.screens.login.LoginViewModel
+import com.project.ui.screens.register.RegisterViewModel
 import com.project.ui.screens.social.SocialViewModel
 import com.project.ui.screens.study.StudyViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -34,6 +35,7 @@ val ViewModelModule = module {
     viewModel {GymViewModel(get(), get())}
     viewModel { SocialViewModel(get(), get()) }
     viewModel { StudyViewModel(get(), get()) }
+    viewModel { RegisterViewModel(get(), get()) }
 }
 
 

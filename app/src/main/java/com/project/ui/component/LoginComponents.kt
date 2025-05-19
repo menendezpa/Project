@@ -1,5 +1,6 @@
 package com.project.ui.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,8 +34,10 @@ import androidx.compose.ui.graphics.vector.DefaultTintColor
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.project.ui.screens.login.LoginViewModel
 import com.project.ui.theme.bottomShape
 import com.project.ui.theme.topShape
@@ -53,19 +57,23 @@ fun ValidateUserComponent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         OutlinedTextField(
+            singleLine = true,
             modifier = Modifier.width(280.dp),
             shape = topShape,
             colors = TextFieldDefaults.colors(),
             value = userValue,
             onValueChange = userOnChange,
-            label = { Text("Usuario") }
+            label = { Text("Usuario", style = MaterialTheme.typography.labelLarge) },
+            textStyle = MaterialTheme.typography.bodyLarge,
         )
 
         OutlinedTextField(
+            singleLine = true,
             modifier = Modifier.width(280.dp),
             shape = bottomShape,
             value = passwordValue,
             colors = TextFieldDefaults.colors(),
+            textStyle = MaterialTheme.typography.bodyLarge,
             onValueChange = passwordOnChange,
             visualTransformation = if (passwordVisibilityState) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -88,21 +96,19 @@ fun ValidateUserComponent(
                     modifier = Modifier.background(
                         shape = RectangleShape,
                         color = DefaultTintColor
-                    )
+                    ),
+                    style = MaterialTheme.typography.labelLarge
                 )
             },
             placeholder = { Text("Contraseña") }
         )
 
-        Checkbox(
-            checked = false,
-            onCheckedChange = { /*TODO*/ }
-        )
     }
 }
 
+@SuppressLint("VisibleForTests")
 @Composable
-fun UserOptionsButtons(viewModel: LoginViewModel) {
+fun UserOptionsButtons(viewModel: LoginViewModel, navController: NavController) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -118,7 +124,7 @@ fun UserOptionsButtons(viewModel: LoginViewModel) {
         }
 
         ElevatedButton(
-            onClick = { viewModel.register() },
+            onClick = { navController.navigate("register") },
             modifier = Modifier.width(280.dp),
             shape = bottomShape,
             colors = ButtonDefaults.buttonColors(),

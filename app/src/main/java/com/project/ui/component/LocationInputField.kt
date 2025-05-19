@@ -29,21 +29,17 @@ fun LocationInputField(
     onQueryChange: (String) -> Unit,
     placesClient: PlacesClient,
     onPlaceSelected: (Place) -> Unit,
-    onLatitudChange: (String) -> Unit
+    onLatitudChange: (String) -> Unit = {},
+    showSuggestions: Boolean = true  // nuevo parámetro para controlar mostrar predicciones
 ) {
-    // Estado para manejar las predicciones de lugares
     var predictions by remember { mutableStateOf<List<AutocompletePrediction>>(emptyList()) }
-
-    // Variable para determinar si hemos seleccionado un lugar
     var isPlaceSelected by remember { mutableStateOf(false) }
 
-    // Ejecutar la búsqueda cuando el usuario escribe
     LaunchedEffect(query) {
-        // Solo hacemos la búsqueda si no hemos seleccionado un lugar o si el texto está vacío
-        if (query.isNotBlank() && !isPlaceSelected) {
+        if (query.isNotBlank() && !isPlaceSelected && showSuggestions) {
             val request = FindAutocompletePredictionsRequest.builder()
                 .setQuery(query)
-                .setCountries("ES")  // Limitar a España o la región que necesites
+                .setCountries("ES")
                 .build()
 
             placesClient.findAutocompletePredictions(request)
@@ -53,26 +49,26 @@ fun LocationInputField(
                 .addOnFailureListener {
                     predictions = emptyList()
                 }
+        } else {
+            predictions = emptyList()
         }
     }
 
     Column {
-        // Componente de texto para escribir el lugar
         OutlinedTextField(
             value = query,
             onValueChange = {
                 onQueryChange(it)
                 if (isPlaceSelected) {
-                    isPlaceSelected =
-                        false // Permite la edición nuevamente si el lugar fue seleccionado
+                    isPlaceSelected = false
                 }
             },
             label = { Text("Buscar lugar") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Si hay predicciones y no se ha seleccionado un lugar, mostramos las sugerencias
-        if (predictions.isNotEmpty() && query.isNotBlank() && !isPlaceSelected) {
+        // Mostrar sugerencias solo si showSuggestions es true, además de condiciones previas
+        if (showSuggestions && predictions.isNotEmpty() && query.isNotBlank() && !isPlaceSelected) {
             LazyColumn {
                 items(predictions) { prediction ->
                     val primaryText = prediction.getPrimaryText(null).toString()
@@ -81,14 +77,13 @@ fun LocationInputField(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                // Cuando se selecciona un lugar, lo almacenamos
                                 isPlaceSelected = true
                                 fetchPlaceDetails(prediction.placeId, placesClient) { place ->
                                     val address = place.formattedAddress ?: place.displayName ?: ""
-                                    onQueryChange(address)  // Actualizamos el texto con la dirección del lugar
-                                    onPlaceSelected(place)  // Pasa el lugar seleccionado
+                                    onQueryChange(address)
+                                    onPlaceSelected(place)
                                     onLatitudChange(place.location?.latitude?.toString() ?: "")
-                                    predictions = emptyList() // Limpiamos las predicciones
+                                    predictions = emptyList()
                                 }
                             }
                             .padding(8.dp)

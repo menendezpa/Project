@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import com.project.ui.screens.gym.GymScreen
 import com.project.ui.screens.home.HomeScreen
 import com.project.ui.screens.login.LoginScreen
+import com.project.ui.screens.register.RegisterScreen
 import com.project.ui.screens.social.SocialScreen
 import com.project.ui.screens.study.StudyScreen
 
@@ -26,7 +27,7 @@ fun AppNavGraph(navController: NavHostController, startDestination: String) {
             }
 
             composable("register") {
-                TODO(" RegisterScreen(navController)")
+               RegisterScreen(navController)
             }
 
             composable("home") {

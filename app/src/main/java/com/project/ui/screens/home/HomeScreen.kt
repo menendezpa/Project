@@ -203,11 +203,21 @@ fun Home(
                 )
             }
             selectedTask?.let { task ->
+
                 FloatingTask(
                     task = task,
                     onDismiss = { selectedTask = null },
-                    onSave = { selectedTask = null },
-                    urgencyLevels = urgencies
+                    onSave = {
+                        viewModel.updateTask(it)
+                        selectedTask = null
+                        viewModel.loadTasksForUser()
+                    },
+                    urgencyLevels = urgencies,
+                    onDelete = {
+                        viewModel.deleteTask(task)
+                        selectedTask = null
+                        viewModel.loadTasksForUser()
+                    },
                 )
             }
         }
@@ -268,13 +278,16 @@ fun Home(modifier: Modifier = Modifier) {
     ) { innerPadding ->
         Row {
             Card(
-                modifier = modifier
+                modifier = Modifier
                     .padding(innerPadding)
                     .padding(16.dp)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Column(
+
+            Column(
                     modifier = modifier,
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally

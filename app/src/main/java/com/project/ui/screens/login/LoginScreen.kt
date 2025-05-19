@@ -85,7 +85,8 @@ fun LoginScreen(
             userOnChange = { viewModel.updateUsername(it) },
             passwordValue = password,
             passwordOnChange = { viewModel.updatePassword(it) },
-            uiState = uiState
+            uiState = uiState,
+            navController = navController
         )
     }
 }
@@ -107,6 +108,7 @@ fun LoginScreen(
 @Composable
 fun Login(
     viewModel: LoginViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier,
     /**Nombre del usuario*/
     userValue: String,
@@ -122,7 +124,7 @@ fun Login(
 //    val context = LocalContext.current
 
     Scaffold (
-        topBar = { AppTopBar() }
+        topBar = { AppTopBar(title = "Inicio de Sesión", canLogOut = false, canNavigateBack = false) }
     ) {innerPadding->
         Column(
             modifier = modifier.padding(innerPadding),
@@ -168,14 +170,14 @@ fun Login(
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 HorizontalDivider(
                     modifier = Modifier
-                        .width(280.dp),
+                        .width(340.dp),
                     thickness = 3.dp
                 )
             }
 
             /**
              * Botones de Inicio, registo y recuperación de contraseña*/
-            UserOptionsButtons(viewModel)
+            UserOptionsButtons(viewModel, navController)
         }
     }
 }
