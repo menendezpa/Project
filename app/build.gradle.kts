@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
     implementation(libs.androidx.foundation)
+    implementation(libs.all.modules.page.plugin)
     //    implementation(libs.ads.mobile.sdk)
 //    implementation(libs.androidx.datastore.preferences)
 

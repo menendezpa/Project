@@ -12,7 +12,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
+/**
+ * Muestra los botones de acción para una tarea.
+ * @param onCancel Función a ejecutar al hacer clic en el botón de cancelar.
+ * @param onConfirm Función a ejecutar al hacer clic en el botón de confirmar.
+ * @see Row
+ * @see TextButton
+ * @see Modifier
+ * @see Spacer
+ * @see Text
+ * @see MaterialTheme
+ * */
 @Composable
 fun TaskActionButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
     Row(

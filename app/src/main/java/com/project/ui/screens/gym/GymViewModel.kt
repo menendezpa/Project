@@ -1,5 +1,7 @@
 package com.project.ui.screens.gym
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.project.data.Place
@@ -22,6 +24,7 @@ class GymViewModel(
     private val _urgencies = MutableStateFlow<List<Urgency>>(emptyList())
     val urgencies: StateFlow<List<Urgency>> = _urgencies.asStateFlow()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun insertTask(task: Task) {
         viewModelScope.launch {
             _uiState.value = GymUiState.Loading
@@ -43,9 +46,3 @@ class GymViewModel(
 
 }
 
-sealed class GymUiState {
-    data object Idle : GymUiState()
-    data object Loading : GymUiState()
-    data class Success(val message: String = "Tarea guardada correctamente") : GymUiState()
-    data class Error(val message: String) : GymUiState()
-}

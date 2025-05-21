@@ -13,21 +13,30 @@ import com.project.ui.screens.social.SocialViewModel
 import com.project.ui.screens.study.StudyViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-
+/**
+ * Módulo para Firebase.
+ * @see module
+ * @see single*/
 // Módulo para Firebase
 val firebaseModule = module {
     single { FirebaseAuth.getInstance() }
     single { FirebaseFirestore.getInstance() }
 }
 
-
+/**
+ * Módulo para el repositorio.
+ * @see module
+ * @see single*/
 // Módulo para el repositorio
 val repositoryModule = module {
     // Suponiendo que AuthRepository recibe una instancia de FirebaseAuth
     single { AuthRepository(get()) }
     single { UserRepository() }
 }
-
+/**
+ * Módulo para los ViewModels.
+ * @see module
+ * @see viewModel*/
 // Módulo para los ViewModels
 val ViewModelModule = module {
     viewModel { LoginViewModel(get()) }
@@ -41,6 +50,8 @@ val ViewModelModule = module {
 
 
 
-
+/**
+ * Lista total de módulos para Koin.
+ * @see listOf*/
 // Lista total de módulos para Koin
 val appModules = listOf(firebaseModule, repositoryModule, ViewModelModule)

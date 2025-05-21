@@ -22,7 +22,18 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 
-
+/**
+ * Muestra un campo de entrada de texto para buscar lugares.
+ * @param query Texto de búsqueda actual.
+ * @param onQueryChange Función para manejar cambios en el texto de búsqueda.
+ * @param placesClient Cliente de Places para obtener detalles del lugar.
+ * @param onPlaceSelected Función para manejar la selección de un lugar.
+ * @param onLatitudChange Función para manejar cambios en la latitud.
+ * @param showSuggestions Indica si se deben mostrar las sugerencias de búsqueda.
+ * @see OutlinedTextField
+ * @see LazyColumn
+ * @see Text
+ * @see Modifier*/
 @Composable
 fun LocationInputField(
     query: String,
@@ -93,7 +104,15 @@ fun LocationInputField(
         }
     }
 }
-
+/**
+ * Obtiene los detalles de un lugar dado su ID.
+ * @param placeId ID del lugar.
+ * @param placesClient Cliente de Places para obtener detalles del lugar.
+ * @param onPlaceDetailsFetched Función para manejar la respuesta con los detalles del lugar.
+ * @see FetchPlaceRequest
+ * @see PlacesClient
+ * @see Place
+ * */
 private fun fetchPlaceDetails(
     placeId: String,
     placesClient: PlacesClient,

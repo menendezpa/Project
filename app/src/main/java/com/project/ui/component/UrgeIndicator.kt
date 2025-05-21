@@ -24,7 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.project.data.Urgency
 import com.project.ui.component.darken
-
+/**
+ * Muestra un indicador de urgencia.
+ * @param urgency Urgencia a mostrar.
+ * @see Card
+ * @see Row
+ * @see Modifier*/
 @Composable
 fun UrgeIndicator(urgency: Urgency) {
     val backgroundColor = Color(urgency.colorHex.toColorInt())

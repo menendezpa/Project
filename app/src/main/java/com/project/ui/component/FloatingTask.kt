@@ -51,7 +51,20 @@ import com.project.data.Place
 import com.project.data.Task
 import com.project.data.Urgency
 
-
+/**
+ * Muestra un diálogo para editar una tarea.
+ * @param task Tarea a editar.
+ * @param onDismiss Función a ejecutar al cerrar el diálogo.
+ * @param onSave Función a ejecutar al guardar los cambios.
+ * @param onDelete Función a ejecutar al eliminar la tarea.
+ * @param modifier Modificador para personalizar la apariencia del diálogo.
+ * @param urgencyLevels Lista de niveles de urgencia.
+ * @see Dialog
+ * @see Card
+ * @see CardDefaults
+ * @see IconButton
+ * @see IconButtonDefaults
+ * @see TextButton*/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FloatingTask(
@@ -285,7 +298,20 @@ fun FloatingTask(
 
 }
 
-
+/**
+ * Muestra un indicador de página en un Pager.
+ * @param currentPage Página actual.
+ * @param pageCount Total de páginas.
+ * @see Row
+ * @see Box
+ * @see CircleShape
+ * @see Modifier
+ * @see MaterialTheme
+ * @see Text
+ * @see Button
+ * @see IconButton
+ * @see IconButtonDefaults
+ * */
 @Composable
 fun CustomPagerIndicator(currentPage: Int, pageCount: Int) {
     Row(
@@ -309,7 +335,6 @@ fun CustomPagerIndicator(currentPage: Int, pageCount: Int) {
         }
     }
 }
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FirstPage(

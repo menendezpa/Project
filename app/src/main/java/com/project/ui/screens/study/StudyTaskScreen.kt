@@ -1,25 +1,12 @@
 package com.project.ui.screens.study
 
-
+// Importaciones necesarias
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,124 +18,65 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.project.data.Task
 import com.project.data.Urgency
-import com.project.ui.component.AnnotationField
-import com.project.ui.component.AppTopBar
-import com.project.ui.component.DatePickerField
-import com.project.ui.component.LocationInputField
-import com.project.ui.component.NotesInputField
-import com.project.ui.component.TaskActionButtons
-import com.project.ui.component.TaskMap
-import com.project.ui.component.UrgencyDropDown
+import com.project.ui.component.*
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Pantalla de creación de tareas relacionadas con estudios.
+ * Este Composable sirve como punto de entrada y se encarga de inicializar el ViewModel mediante Koin.
+ *
+ * @param navController Controlador de navegación de Jetpack Navigation.
+ * @param viewModel ViewModel de la pantalla, inyectado por Koin.
+ * @see StudyViewModel
+ * @see NavController
+ * @see Study
+ * @see Scaffold
+ * @see AppTopBar
+ * @see TaskActionButtons
+ * @see NotesInputField
+ * @see UrgencyDropDown
+ * @see DatePickerField
+ * @see LocationInputField
+ * @see TaskMap
+ * @see AnnotationField
+ * @see LaunchedEffect
+ * @see remember
+ * @see LocalContext
+ * @see Places
+ * @see MutableState
+ * @see remember
+ * @see mutableStateOf
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StudyScreen(
-    navController: NavController, viewModel: StudyViewModel = koinViewModel()
+    navController: NavController,
+    viewModel: StudyViewModel = koinViewModel()
 ) {
     Study(navController = navController, viewModel = viewModel)
 }
 
-
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//fun Gym(navController: NavController, viewModel: GymViewModel) {
-//    val context = LocalContext.current
-//    val placesClient = remember { Places.createClient(context) }
-//
-//    var taskName by remember { mutableStateOf("") }
-//    var description by remember { mutableStateOf("") }
-//    var date by remember { mutableStateOf("") }
-//    var annotation by remember { mutableStateOf("") }
-//    var placeQuery by remember { mutableStateOf("") }
-//    var selectedPlace by remember { mutableStateOf<Place?>(null) }
-//    var latitud by remember { mutableStateOf("") }
-//    var longitud by remember { mutableStateOf("") }
-//    var urgency by remember { mutableStateOf("") }
-//    val task = Task(
-//        taskName = taskName,
-//        description = description,
-//        date = date,
-//        place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
-//        annotation = annotation,
-//        categoryId = "Training",
-//        urgencyId = urgency,
-//        tagIds = listOf()
-//    )
-//    // Ubicación predeterminada: centro de Madrid
-//    var mapLocation by remember {
-//        mutableStateOf(LatLng(40.4168, -3.7038))  // Madrid
-//    }
-
-//    Scaffold(topBar = { GymTopBar() }, bottomBar = {
-//        ConfirmCancelButtons(onAccept = {
-//            if (taskName.isBlank() || description.isBlank() || date.isBlank() || selectedPlace == null) {
-//                Toast.makeText(
-//                    context, "Por favor, complete todos los campos.", Toast.LENGTH_LONG
-//                ).show()
-//            } else {
-//                viewModel.insertTask(
-//                    task = task
-//                )
-//                navController.popBackStack()
-//            }
-//        }, onCancel = { navController.popBackStack() })
-//    }) { innerPadding ->
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(innerPadding)
-//                .padding(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(12.dp)
-//        ) {
-////            InputFields(
-////                taskName = taskName,
-////                description = description,
-////                date = date,
-////                onTaskNameChange = { taskName = it },
-////                onDescriptionChange = { description = it },
-////                onDateChange = { date = it }
-////            )
-//
-//            // Campo de autocompletado para lugar
-//            SimplePlaceAutocompleteTextField(
-//                query = placeQuery,
-//                onQueryChange = { placeQuery = it },
-//                placesClient = placesClient,
-//                onPlaceSelected = { place ->
-//                    selectedPlace = place
-//                    placeQuery = place.formattedAddress ?: ""
-//                    latitud = place.location?.latitude?.toString() ?: ""
-//                    longitud = place.location?.longitude?.toString() ?: ""
-//                    place.location?.let {
-//                        mapLocation =
-//                            it // Actualiza la ubicación del mapa con la ubicación seleccionada
-//                    }
-//                },
-//                onLatitudChange = { latitud = it })
-//
-//            MyMap(location = mapLocation)  // Siempre muestra el mapa
-//
-//
-////
-//            AnnotationField(
-//                annotation = annotation, onAnnotationChange = { annotation = it })
-//        }
-//    }
-//}
-//
-
+/**
+ * Contenido principal de la pantalla de estudios.
+ * Permite al usuario ingresar información para crear una nueva tarea del tipo "Estudio".
+ *
+ * @param navController Controlador de navegación utilizado para regresar después de guardar la tarea.
+ * @param viewModel ViewModel que maneja el estado y operaciones relacionadas con esta pantalla.
+ * */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Study(navController: NavController, viewModel: StudyViewModel) {
 
+    // Carga las urgencias disponibles al entrar en la pantalla
     LaunchedEffect(Unit) {
         viewModel.loadUrgencies()
     }
 
+    // Contexto necesario para mostrar Toasts y crear el PlacesClient
     val context = LocalContext.current
     val placesClient = remember { Places.createClient(context) }
 
+    // Estados locales para almacenar la información ingresada por el usuario
     var taskName by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -157,26 +85,29 @@ fun Study(navController: NavController, viewModel: StudyViewModel) {
     var selectedPlace by remember { mutableStateOf<Place?>(null) }
     var latitud by remember { mutableStateOf("") }
     var longitud by remember { mutableStateOf("") }
-    var urgency by remember { mutableStateOf(Urgency()) } // Inicializas con una urgencia por defecto
+    var urgency by remember { mutableStateOf(Urgency()) }
 
-
+    // Coordenadas del mapa que se mostrarán inicialmente (Madrid)
     var mapLocation by remember {
-        mutableStateOf(LatLng(40.4168, -3.7038))  // Madrid
+        mutableStateOf(LatLng(40.4168, -3.7038))
     }
 
+    // Lista de niveles de urgencia desde el ViewModel
     val urgencyLevels by viewModel.urgencies.collectAsState()
-    val task = Task(
 
+    // Objeto Task que se construirá y enviará al ViewModel
+    val task = Task(
         taskName = taskName,
         description = description,
         date = date,
         place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
         annotation = annotation,
-        categoryId = "Estudios",
+        categoryId = "Estudios", // Categoría fija
         urgency = urgency,
-        tagIds = listOf()
+        tagIds = listOf() // Tags aún no utilizados
     )
 
+    // Estructura visual principal
     Scaffold(
         topBar = {
             AppTopBar(
@@ -186,19 +117,24 @@ fun Study(navController: NavController, viewModel: StudyViewModel) {
             )
         },
         bottomBar = {
-            TaskActionButtons(onCancel = { navController.popBackStack() }, onConfirm = {
-                if (taskName.isBlank() || description.isBlank() || date.isBlank() || selectedPlace == null) {
-                    Toast.makeText(
-                        context, "Por favor, complete todos los campos.", Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    viewModel.insertTask(
-                        task = task
-                    )
-                    navController.popBackStack()
+            // Botones de acción para confirmar o cancelar
+            TaskActionButtons(
+                onCancel = { navController.popBackStack() },
+                onConfirm = {
+                    // Validación de campos requeridos
+                    if (taskName.isBlank() || description.isBlank() || date.isBlank() || selectedPlace == null) {
+                        Toast.makeText(
+                            context, "Por favor, complete todos los campos.", Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        viewModel.insertTask(task = task)
+                        navController.popBackStack() // Volver atrás después de guardar
+                    }
                 }
-            })
-        }) { innerPadding ->
+            )
+        }
+    ) { innerPadding ->
+        // Contenedor principal de los campos de entrada
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -206,11 +142,15 @@ fun Study(navController: NavController, viewModel: StudyViewModel) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // Campo para nombre y descripción de la tarea
             NotesInputField(
                 taskName = taskName,
                 description = description,
                 onTaskNameChange = { taskName = it },
-                onDescriptionChange = { description = it })
+                onDescriptionChange = { description = it }
+            )
+
+            // Fila con el selector de urgencia y fecha
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -221,12 +161,10 @@ fun Study(navController: NavController, viewModel: StudyViewModel) {
                 UrgencyDropDown(
                     urgencyLevels = urgencyLevels,
                     selectedUrgency = urgency,
-                    onUrgencyChange = { newUrgency ->
-                        urgency = newUrgency
-                    },
+                    onUrgencyChange = { urgency = it },
                     modifier = Modifier
                         .weight(1f)
-                        .height(56.dp) // altura fija
+                        .height(56.dp)
                 )
 
                 DatePickerField(
@@ -234,12 +172,11 @@ fun Study(navController: NavController, viewModel: StudyViewModel) {
                     onDateSelected = { date = it },
                     modifier = Modifier
                         .weight(1f)
-                        .height(56.dp) // altura fija
+                        .height(56.dp)
                 )
             }
 
-
-
+            // Campo de búsqueda de lugar y selección con Google Places
             LocationInputField(
                 query = placeQuery,
                 onQueryChange = { placeQuery = it },
@@ -249,21 +186,30 @@ fun Study(navController: NavController, viewModel: StudyViewModel) {
                     placeQuery = place.formattedAddress ?: ""
                     latitud = place.location?.latitude?.toString() ?: ""
                     longitud = place.location?.longitude?.toString() ?: ""
-                    place.location?.let {
-                        mapLocation =
-                            it // Actualiza la ubicación del mapa con la ubicación seleccionada
-                    }
+                    place.location?.let { mapLocation = it }
                 },
-                onLatitudChange = { latitud = it })
+                onLatitudChange = { latitud = it }
+            )
+
+            // Mapa que muestra la localización seleccionada
             TaskMap(location = mapLocation)
-            AnnotationField(annotation = annotation, onAnnotationChange = { annotation = it })
+
+            // Campo para anotaciones adicionales
+            AnnotationField(
+                annotation = annotation,
+                onAnnotationChange = { annotation = it }
+            )
         }
     }
 }
 
+/**
+ * Preview para la pantalla de estudios.
+ * Requiere ajustes para funcionar debido a dependencias externas como ViewModel y NavController.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun GymPreview() {
-//    Gym()
+    // Gym() ← Este preview está comentado porque no se ha definido un componente Gym
 }

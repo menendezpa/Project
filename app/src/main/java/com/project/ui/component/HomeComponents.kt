@@ -62,24 +62,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 
-//Componente de cada celda del calendario
-//@Composable
-//fun CalendarCell(
-//    day: Int,
-//    modifier: Modifier = Modifier,
-//    onClick: () -> Unit,
-//    isWithTask: Boolean = false,
-//){
-//    Box(
-//        modifier = modifier
-//            .size(40.dp)
-//            .clickable { onClick() }
-//            .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
-//            .background(if (isWithTask) Color.Green else Color.White),
-//        ){
-//        Text(day.toString() , modifier = Modifier.align(Alignment.Center))
-//    }
-//}
+
+/**
+ * Muestra el encabezado del calendario.
+ * @param modifier Modificador para personalizar la apariencia.
+ * @param currentMonth Mes actual.
+ * @param onPreviousMonth Función a ejecutar al hacer clic en el mes anterior.
+ * @param onNextMonth Función a ejecutar al hacer clic en el mes siguiente.
+ * @see Text*/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarHeader(
@@ -148,7 +138,14 @@ fun CalendarHeader(
         }
     }
 }
-
+/**
+ * Muestra una celda del calendario.
+ * @param day Día del mes.
+ * @param modifier Modificador para personalizar la apariencia.
+ * @param onClick Función a ejecutar al hacer clic en la celda.
+ * @param isWithTask Indica si la celda tiene una tarea asignada.
+ * @see Box
+ * @see Modifier*/
 @Composable
 fun CalendarCell(
     day: Int,
@@ -181,6 +178,13 @@ fun CalendarCell(
     }
 }
 
+/**
+ * Muestra un grid de celdas del calendario.
+ * @param yearMonth Mes actual.
+ * @param modifier Modificador para personalizar la apariencia.
+ * @param onDayClick Función a ejecutar al hacer clic en una celda.
+ * @param daysWithTask Conjunto de fechas con tareas asignadas.
+ * */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarGrid(
@@ -228,7 +232,15 @@ fun CalendarGrid(
         }
     }
 }
-
+/**
+ * Muestra una tarjeta de tarea.
+ * @param task Tarea a mostrar.
+ * @param modifier Modificador para personalizar la apariencia.
+ * @param onClick Función a ejecutar al hacer clic en la tarjeta.
+ * @see Card
+ * @see CardDefaults
+ * @see MaterialTheme
+ * @see Text*/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskCard(
@@ -336,7 +348,13 @@ fun TaskCard(
         }
     }
 }
-
+/**
+ * Muestra el estado de la tarea.
+ * @param currentState Estado de la tarea.
+ * @param enabled Si el estado está habilitado o no.
+ * @param onClick Función a ejecutar al hacer clic en el estado.
+ * @see Text
+ * @see MaterialTheme*/
 @Composable
 fun State(
     currentState: String,
@@ -374,7 +392,16 @@ fun State(
     }
 }
 
-
+/**
+ * Muestra la lista de tareas para una fecha específica.
+ * @param tasks Lista de tareas.
+ * @param date Fecha para filtrar las tareas.
+ * @param onTaskClick Función a ejecutar al hacer clic en una tarea.
+ * @see TaskCard
+ * @see LazyColumn
+ * @see items
+ * @see Spacer
+ * */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TaskList(

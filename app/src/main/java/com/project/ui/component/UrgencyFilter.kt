@@ -29,7 +29,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.project.data.Urgency
-
+/**
+ * Muestra un campo de texto para seleccionar una urgencia.
+ * @param modifier Modificador para personalizar el diseño.
+ * @param urgencies Lista de urgencias disponibles.
+ * @param selectedUrgency Urgencia seleccionada.
+ * @param onUrgencySelected Función para manejar la selección de una urgencia.
+ * @see OutlinedTextField
+ * @see Modifier
+ * @see LocalDensity
+ * */
 @Composable
 fun UrgencyFilter(
     urgencies: List<Urgency>,

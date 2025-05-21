@@ -20,7 +20,10 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberUpdatedMarkerState
-
+/**
+ * Muestra un campo de texto para ingresar una ubicación.
+ * @param location Valor de la ubicación.
+ * */
 @Composable
 fun TaskMap(location: LatLng) {
     val cameraPositionState = rememberCameraPositionState()

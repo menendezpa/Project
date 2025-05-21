@@ -18,12 +18,21 @@ import com.project.ui.screens.gym.GymScreen
 import com.project.ui.theme.MyAppTheme
 import org.koin.android.ext.android.inject
 import com.project.ui.theme.backgroundLight
-
+/**
+ * Actividad principal de la aplicación.
+ * @see ComponentActivity
+ * @see MyAppTheme
+ * @see AppNavGraph
+ * @see rememberNavController
+ * */
 class MainActivity : ComponentActivity() {
     // ...
 
     private val authRepository: AuthRepository by inject()
-
+/**
+ * Se llama cuando la actividad se crea.
+ * @param savedInstanceState Estado de la instancia.
+ * @see onCreate*/
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

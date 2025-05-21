@@ -29,7 +29,16 @@ import androidx.compose.ui.unit.dp
 import java.time.Instant
 import java.time.ZoneId
 
-
+/**
+ * Campo de texto para la fecha.
+ * @param selectedDate Fecha seleccionada.
+ * @param onDateSelected Función para manejar cambios en la fecha seleccionada.
+ * @param modifier Modificador para personalizar la apariencia del campo de texto.
+ * @see OutlinedTextField
+ * @see rememberDatePickerState
+ * @see DatePickerDialog
+ * @see DatePicker
+ * */
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

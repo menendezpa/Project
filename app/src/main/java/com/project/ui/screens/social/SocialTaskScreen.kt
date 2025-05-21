@@ -41,6 +41,12 @@ import com.project.ui.component.TaskMap
 import com.project.ui.component.UrgencyDropDown
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Pantalla de creación de tareas relacionadas con estudios.
+ * Este Composable sirve como punto de entrada y se encarga de inicializar el ViewModel mediante Koin.
+ * @param navController Controlador de navegación de Jetpack Navigation.
+ * @param viewModel ViewModel de la pantalla, inyectado por Koin.
+ * @see SocialViewModel*/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SocialScreen(
@@ -50,94 +56,13 @@ fun SocialScreen(
 }
 
 
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//fun Gym(navController: NavController, viewModel: GymViewModel) {
-//    val context = LocalContext.current
-//    val placesClient = remember { Places.createClient(context) }
-//
-//    var taskName by remember { mutableStateOf("") }
-//    var description by remember { mutableStateOf("") }
-//    var date by remember { mutableStateOf("") }
-//    var annotation by remember { mutableStateOf("") }
-//    var placeQuery by remember { mutableStateOf("") }
-//    var selectedPlace by remember { mutableStateOf<Place?>(null) }
-//    var latitud by remember { mutableStateOf("") }
-//    var longitud by remember { mutableStateOf("") }
-//    var urgency by remember { mutableStateOf("") }
-//    val task = Task(
-//        taskName = taskName,
-//        description = description,
-//        date = date,
-//        place = com.project.data.Place(lat = latitud, lon = longitud, name = placeQuery),
-//        annotation = annotation,
-//        categoryId = "Training",
-//        urgencyId = urgency,
-//        tagIds = listOf()
-//    )
-//    // Ubicación predeterminada: centro de Madrid
-//    var mapLocation by remember {
-//        mutableStateOf(LatLng(40.4168, -3.7038))  // Madrid
-//    }
-
-//    Scaffold(topBar = { GymTopBar() }, bottomBar = {
-//        ConfirmCancelButtons(onAccept = {
-//            if (taskName.isBlank() || description.isBlank() || date.isBlank() || selectedPlace == null) {
-//                Toast.makeText(
-//                    context, "Por favor, complete todos los campos.", Toast.LENGTH_LONG
-//                ).show()
-//            } else {
-//                viewModel.insertTask(
-//                    task = task
-//                )
-//                navController.popBackStack()
-//            }
-//        }, onCancel = { navController.popBackStack() })
-//    }) { innerPadding ->
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(innerPadding)
-//                .padding(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(12.dp)
-//        ) {
-////            InputFields(
-////                taskName = taskName,
-////                description = description,
-////                date = date,
-////                onTaskNameChange = { taskName = it },
-////                onDescriptionChange = { description = it },
-////                onDateChange = { date = it }
-////            )
-//
-//            // Campo de autocompletado para lugar
-//            SimplePlaceAutocompleteTextField(
-//                query = placeQuery,
-//                onQueryChange = { placeQuery = it },
-//                placesClient = placesClient,
-//                onPlaceSelected = { place ->
-//                    selectedPlace = place
-//                    placeQuery = place.formattedAddress ?: ""
-//                    latitud = place.location?.latitude?.toString() ?: ""
-//                    longitud = place.location?.longitude?.toString() ?: ""
-//                    place.location?.let {
-//                        mapLocation =
-//                            it // Actualiza la ubicación del mapa con la ubicación seleccionada
-//                    }
-//                },
-//                onLatitudChange = { latitud = it })
-//
-//            MyMap(location = mapLocation)  // Siempre muestra el mapa
-//
-//
-////
-//            AnnotationField(
-//                annotation = annotation, onAnnotationChange = { annotation = it })
-//        }
-//    }
-//}
-//
-
+/**
+ * Contenido principal de la pantalla de estudios.
+ * Permite al usuario ingresar información para crear una nueva tarea del tipo "Estudio".
+ * @param navController Controlador de navegación utilizado para regresar después de guardar la tarea.
+ * @param viewModel ViewModel que maneja el estado y operaciones relacionadas con esta pantalla.
+ * @see SocialViewModel
+ * */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Social(navController: NavController, viewModel: SocialViewModel) {

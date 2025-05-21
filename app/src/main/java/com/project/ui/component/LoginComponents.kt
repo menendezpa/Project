@@ -42,7 +42,16 @@ import com.project.ui.screens.login.LoginViewModel
 import com.project.ui.theme.bottomShape
 import com.project.ui.theme.topShape
 
-
+/**
+ * Muestra el formulario de inicio de sesión.
+ * @param userValue Valor del campo de usuario.
+ * @param userOnChange Función para manejar cambios en el campo de usuario.
+ * @param passwordValue Valor del campo de contraseña.
+ * @param passwordOnChange Función para manejar cambios en el campo de contraseña.
+ * @see OutlinedTextField
+ * @see Text
+ * @see Modifier
+ * @see Column*/
 @Composable
 fun ValidateUserComponent(
     userValue: String,
@@ -106,6 +115,14 @@ fun ValidateUserComponent(
     }
 }
 
+/**
+ * Muestra los botones de inicio de sesión y registro.
+ * @param viewModel Modelo de vista para manejar la lógica del inicio de sesión.
+ * @param navController Controlador de navegación para navegar entre pantallas.
+ * @see ElevatedButton
+ * @see Text
+ * @see Modifier
+ * */
 @SuppressLint("VisibleForTests")
 @Composable
 fun UserOptionsButtons(viewModel: LoginViewModel, navController: NavController) {

@@ -56,7 +56,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-
+/**
+ * Composable para la barra de navegación superior.
+ * @param modifier Modificador para personalizar la apariencia de la barra de navegación.
+ * @param title Título de la barra de navegación.
+ * @param canNavigateBack Indica si se puede navegar hacia atrás.
+ * @param onNavigateBack Función a ejecutar al hacer clic en el botón de navegación hacia atrás.
+ * @param canLogOut Indica si se puede cerrar sesión.
+ * @param onLogOut Función a ejecutar al cerrar sesión.
+ * @see TopAppBar
+ * @see IconButton
+ * @see Icon
+ * @see FloatingActionButton
+ * @see FloatingActionButtonDefaults
+ * @see Button
+ * @see ButtonDefaults
+ * @see Text
+ * @see AlertDialog
+ * @see WarningDialog
+ * @see Surface
+ * @see MaterialTheme
+ * @see Color
+ * @see Icons
+ * @see Icons.AutoMirrored
+ * */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(

@@ -15,6 +15,13 @@ import com.project.ui.screens.social.SocialScreen
 import com.project.ui.screens.study.StudyScreen
 
 
+/**
+ * Navegación de la aplicación.
+ * @param navController Controlador de navegación.
+ * @param startDestination Ruta de inicio.
+ * @see NavHost
+ * @see NavHostController
+ * @see composable*/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavGraph(navController: NavHostController, startDestination: String) {

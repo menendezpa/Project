@@ -22,7 +22,18 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
+/**
+ * Muestra un campo de entrada de texto para ingresar una tarea y una descripción.
+ * @param taskName Nombre de la tarea.
+ * @param description Descripción de la tarea.
+ * @param onTaskNameChange Función para manejar cambios en el nombre de la tarea.
+ * @param onDescriptionChange Función para manejar cambios en la descripción.
+ * @see OutlinedTextField
+ * @see Modifier
+ * @see Column
+ * @see Row
+ * @see Text
+ * @see MaterialTheme*/
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotesInputField(

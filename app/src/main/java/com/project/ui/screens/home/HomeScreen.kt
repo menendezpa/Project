@@ -45,7 +45,14 @@ import com.project.ui.component.UrgencyFilter
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.time.YearMonth
-
+/**
+ * Pantalla de inicio.
+ * @param navController Controlador de navegación.
+ * @param viewModel ViewModel asociado a esta pantalla.
+ * @see HomeViewModel
+ * @see HomeUiState
+ * @see Home
+ * */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
@@ -55,7 +62,14 @@ fun HomeScreen(
 
     Home(navController = navController, viewModel = viewModel/*, tasks = tasks*/)
 }
-
+/**
+ * Pantalla de inicio.
+ * @param viewModel ViewModel asociado a esta pantalla.
+ * @param navController Controlador de navegación.
+ * @param modifier Modificador para personalizar la apariencia de la pantalla.
+ * @see HomeViewModel
+ * @see HomeUiState
+ * */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Home(

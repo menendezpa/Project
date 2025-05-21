@@ -34,7 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.project.data.Urgency
 
-
+/**
+ * Muestra un menú desplegable para seleccionar una urgencia.
+ * @param modifier Modificador para personalizar el diseño.
+ * @param urgencyLevels Lista de niveles de urgencia.
+ * @param selectedUrgency Urgencia seleccionada.
+ * @param onUrgencyChange Función para manejar la selección de una urgencia.
+ * @see OutlinedButton
+ * @see Modifier*/
 @Composable
 fun UrgencyDropDown(
     urgencyLevels: List<Urgency>,

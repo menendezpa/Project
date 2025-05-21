@@ -33,7 +33,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.project.data.Category
-
+/**
+ * Muestra un campo de texto para seleccionar una categoría.
+ * @param modifier Modificador para personalizar el diseño.
+ * @param categories Lista de categorías disponibles.
+ * @param selectedCategory Categoría seleccionada.
+ * @param onCategorySelected Función para manejar la selección de una categoría.
+ * @see OutlinedTextField
+ * @see Modifier
+ * @see LocalDensity
+ * */
 @Composable
 fun TaskFilter(
     categories: List<Category>,
