@@ -42,10 +42,10 @@ class ProjectApplication : Application() {
         // Firestore, Cloud Messaging, etc.
         FirebaseApp.initializeApp(this)
 
-        // Inicializa Google Places con la API Key definida en res/values/strings.xml
+        // Inicializa Google Places con la API Key definida en local.properties (MAPS_API_KEY)
         Places.initialize(
             applicationContext,
-            getString(R.string.places_API)
+            BuildConfig.MAPS_API_KEY
         )
 
         // Inicializa Koin (librería de inyección de dependencias).
